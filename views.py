@@ -63,7 +63,7 @@ class view:
     def Start_tracking(self, e):
 
         print("tracking")
-        self.obj_controller.Video_capture()
+        self.obj_controller.face_recognizer()
 
     def Start_insert_data(self, e):
         print("inserting data")
@@ -72,7 +72,7 @@ class view:
 
         self.window2 = tk.Tk()
         self.window2.geometry("687x526+558+155")
-        self.window2.title(" INSERT STUDENT'S DATA ")
+        self.window2.title(" ENTER STUDENT'S DATA ")
         self.window2.configure(background="#fff")
 
         self.lb_head = ttk.Label(
@@ -139,7 +139,13 @@ class view:
     def trainer(self, e):  # when "train" butten is pressed
 
         print("tarining the model")
-        self.obj_controller.trainer()
+        result = self.obj_controller.trainer()
+        if result == True:
+            messagebox.showinfo("Model Trainer Info",
+                                "Model is trained successfully!")
+        else:
+            messagebox.showinfo("Something went wrong :-(",
+                                "Sorry, unable to train the model.")
 
 
 if __name__ == '__main__':

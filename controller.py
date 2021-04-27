@@ -18,20 +18,33 @@ import cv2
 from PIL import Image
 import numpy as np
 import pickle
+import re
 
 
 class controller:
     def __init__(self):
 
-        self.face_cascades = cv2.CascadeClassifier(
-            '/home/nishi/Desktop/MAJOR PROJECT/New_sys/haarcascades/haarcascade_frontalface_default.xml')
+        global BASE_DIR
 
-        #self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
+        path = os.path.join(BASE_DIR, 'haarcascades',
+                            'haarcascade_frontalface_default.xml')
+        self.face_cascades = cv2.CascadeClassifier(path)
+        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
 
+        yml_path = os.path.join(BASE_DIR, "Model", "trained_model.yml")
+        #font = cv2.FONT_HERSHEY_SIMPLEX
+        self.yml_exists = False
         self.trainingOngoing = False
         self.sample_count = 0
 
-####################################  FACE DETECTION  ###################################################################
+    def face_recognizer(self):
+        yml_path = os.path.join(BASE_DIR, "Model", "trained_model.yml")
+        if os.path.exists(yml_path):
+            self.recognizer.read('Model/trained_model.yml')
+            self.yml_exists = True
+        self.Video_capture()
+####################################  FACE DETECTION & REGIATION ##############################
 
     # capturing the frames i.e. display the video
     def Video_capture(self, s_id=None, s_name=None):
@@ -39,13 +52,13 @@ class controller:
         self.capture = cv2.VideoCapture(0)
 
         while True:
-            ret, frame = self.capture.read(0)
+            ret, got_frame = self.capture.read(0)
+            frame = cv2.cvtColor(got_frame, cv2.COLOR_BGR2GRAY)
             frame = self.Face_detector(frame, s_id, s_name)
 
-            font = cv2.FONT_HERSHEY_SIMPLEX
             if self.trainingOngoing != True:
                 cv2.putText(frame, "press 'ESC' for stopping the tracking ",
-                            (10, 17), font, 1, (0, 255, 255), 1, cv2.LINE_4)
+                            (10, 17), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_4)
             cv2.imshow("Face_detection", frame)
 
             #--------------code for taking sample images for training the model ---------#
@@ -75,8 +88,17 @@ class controller:
 
         if (found != ()):
             for (x, y, w, h) in found:
-                # Draw a rectangle around the faces
-                cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                # Draw a "rectangle" around the faces, AND "rectangle with name " for recognized faces.
+
+                if self.yml_exists == True:
+                    Id, conf = self.recognizer.predict(img[y:y+h, x:x+w])
+                    cv2.rectangle(img, (x, y),
+                                  (x+w, y+h), (0, 255, 0), 2)
+                    cv2.putText(img, str(Id), (x, y-40),
+                                cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
+
+                cv2.rectangle(img, (x, y),
+                              (x+w, y+h), (0, 255, 0), 2)
 
                 #--------------code for taking sample images for training the model ---------#
                 if self.trainingOngoing == True:
@@ -100,7 +122,6 @@ class controller:
         folder_name = s_name+str(s_id)
         folder_name_path = folder_name+"/"
 
-        BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
         req_path = os.path.join(BASE_DIR, "Dataset", folder_name_path)
         if not os.path.exists(req_path):
             os.mkdir(req_path)
@@ -116,12 +137,16 @@ class controller:
     def trainer(self):
 
         faces, Ids = self.getImagesAndLabels()
+        # recognizer.train(images, np.array(labels))
         self.recognizer.train(faces, np.array(Ids))
         self.recognizer.save("Model/trained_model.yml")
+        if not os.path.exists(yml_path):
+            return False
+
+        return True
 
     def getImagesAndLabels(self):
 
-        BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
         req_path = os.path.join(BASE_DIR, "Dataset")
 
         imagePaths = []
@@ -131,16 +156,30 @@ class controller:
             for sample_img in os.listdir(temp_path):
                 imagePaths.append(os.path.join(temp_path, sample_img))
 
-        print(imagePaths)
+        print("All image paths are :- ", imagePaths)
+
         faceSamples = []
         Ids = []
-        for i in imagePaths:
-            pilImage = Image.open(i)
+        for img_path in imagePaths:
+            pilImage = Image.open(img_path)
             imageNp = np.array(pilImage, 'uint8')
             faces = self.face_cascades.detectMultiScale(imageNp)
-            # --->Id=int(os.path.split(imagePath)[-1].split(".")[1])
+
+            # since a face will always be uniquely Identified(ID) by a "id" formate :-
+            unique_id_name = os.path.split(
+                img_path)[-1].split(".")[0].split("_")[0]
+
+            #print("uniq id name is : ", unique_id_name)
+
+            res = re.findall(r"\d+", unique_id_name)
+            #print("digit in name is ; ", res)
+            unique_id = int(res[0])
+
             if (faces != ()):
                 for (x, y, w, h) in faces:
+
                     faceSamples.append(imageNp[y:y+h, x:x+w])
-                    # -->Ids.append(Id)
+                    Ids.append(unique_id)
+        #print("face DAmples are :--  ", faceSamples)
+        #print("IDs (lables are): --  ", Ids)
         return faceSamples, Ids
