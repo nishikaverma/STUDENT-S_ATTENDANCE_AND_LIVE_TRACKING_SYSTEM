@@ -1,0 +1,150 @@
+import tkinter as tk
+import tkinter.ttk as ttk
+from tkinter import messagebox
+import controller
+
+
+def start_gui():
+    root = tk.Tk()
+    obj_view = view(root)
+    root.mainloop()
+    global all_names
+    global all_ids
+    global students
+
+
+class view:
+    global all_names
+    global all_ids
+    global students
+
+    def __init__(self, root):
+        # ----------- gui coding of application ------------------
+        root.geometry("687x526+558+155")
+        root.title("Automatic Student's Attendance System")
+        root.configure(background="#fff")
+        self.root = root
+
+        self.lb_headding = ttk.Label(
+            self.root, text="Welcome to Automatic Student's Attendance System ! ")
+
+        self.selection = tk.IntVar()
+        self.rb_tracking = ttk.Radiobutton(
+            self.root, text="Start Tracking", command=self.rb_option_select, variable=self.selection, value=1)
+
+        self.rb_Insert_Data = ttk.Radiobutton(
+            self.root, text="Insert Student's data", command=self.rb_option_select, variable=self.selection, value=2)
+
+        self.btn_proceed = ttk.Button(self.root, text="Proceed")
+        self.btn_proceed.bind("<Button>", self.rb_option_select)
+
+        self.lb_headding.pack()
+        self.rb_tracking.pack()
+        self.rb_Insert_Data.pack()
+        self.btn_proceed.pack()
+
+        # ------------------------------------------------------
+        self.obj_controller = controller.controller()
+
+    def rb_option_select(self, e=0):
+
+        self.option = self.selection.get()
+
+        if self.option == 1:  # "start tracking" selected
+            self.btn_proceed.bind("<Button>", self.Start_tracking)
+
+        elif self.option == 2:  # "insert data" selected
+            self.btn_proceed.bind("<Button>", self.Start_insert_data)
+
+        else:  # if no option selected,then, self.options == 0
+            print("no option given ", self.option)
+            messagebox.showinfo("NO SELECTION!", "Plese select an option.")
+
+    def Start_tracking(self, e):
+
+        print("tracking")
+        self.obj_controller.Video_capture()
+
+    def Start_insert_data(self, e):
+        print("inserting data")
+
+        # if (name and sid):  # if both name and sid is given
+
+        self.window2 = tk.Tk()
+        self.window2.geometry("687x526+558+155")
+        self.window2.title(" INSERT STUDENT'S DATA ")
+        self.window2.configure(background="#fff")
+
+        self.lb_head = ttk.Label(
+            self.window2, text="Enter the student's details.")
+        self.lb_name = ttk.Label(self.window2, text="Student's Name :")
+        self.lb_id = ttk.Label(self.window2, text="Student's ID :")
+
+        self.ent_name = ttk.Entry(self.window2)
+        self.ent_id = ttk.Entry(self.window2)
+
+        self.btn_store = ttk.Button(self.window2, text="Store info")
+        # when "store" butten is pressed
+        self.btn_store.bind("<Button>", self.Store_data)
+
+        self.btn_train = ttk.Button(self.window2, text="Train model")
+        # when "train" butten is pressed
+        self.btn_train.bind("<Button>", self.trainer)
+
+        self.lb_head.grid(row=0, column=0)
+        self.lb_name.grid(row=1, column=0)
+        self.lb_id.grid(row=2, column=0)
+        self.ent_name.grid(row=1, column=1)
+        self.ent_id.grid(row=2, column=1)
+        self.btn_store.grid(row=3, column=0)
+        self.btn_train.grid(row=3, column=1)
+
+        self.window2.mainloop()
+
+    def Store_data(self, e):  # when "store" butten is pressed
+
+        print("img capture")
+
+        s_name = self.ent_name.get()
+        s_id = self.ent_id.get()
+
+        print("name :", s_name, "        id:", s_id)
+        print(all_ids)
+
+        if (s_id and s_name):  # when both name and id is given
+            s_id = int(s_id)
+            if (s_id not in all_ids):  # given id is unique and not already present
+
+                self.obj_controller.trainingOngoing = True
+                self.obj_controller.Video_capture(s_id, s_name)
+                self.obj_controller.sample_count = 0
+                self.obj_controller.trainingOngoing = False
+
+                messagebox.showinfo("Info", "Data successfully inserted!")
+
+                all_ids.add(s_id)
+                if (s_name not in all_names):
+                    all_names.append(s_name)
+
+                students[s_id] = s_name
+
+            else:  # if given id is already present
+                messagebox.showinfo(
+                    "Info", "A student with id " + str(s_id) + " already present!")
+
+        elif not(s_id) or not(s_name):  # if any one of them (name or id ) is not entered
+            messagebox.showinfo("COMPLETE DATA NOT GIVEN!",
+                                "Plese insert the all values!")
+
+    def trainer(self, e):  # when "train" butten is pressed
+
+        print("tarining the model")
+        self.obj_controller.trainer()
+
+
+if __name__ == '__main__':
+    all_names = []
+    all_ids = set()
+    students = {}
+
+    start_gui()
