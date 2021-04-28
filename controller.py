@@ -19,12 +19,14 @@ from PIL import Image
 import numpy as np
 import pickle
 import re
+import model
 
 
 class controller:
     def __init__(self):
 
         global BASE_DIR
+        global yml_path
 
         BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
         path = os.path.join(BASE_DIR, 'haarcascades',
@@ -38,8 +40,11 @@ class controller:
         self.trainingOngoing = False
         self.sample_count = 0
 
+        self.obj_model= model.Model()
+
+
     def face_recognizer(self):
-        yml_path = os.path.join(BASE_DIR, "Model", "trained_model.yml")
+        
         if os.path.exists(yml_path):
             self.recognizer.read('Model/trained_model.yml')
             self.yml_exists = True
@@ -52,8 +57,8 @@ class controller:
         self.capture = cv2.VideoCapture(0)
 
         while True:
-            ret, got_frame = self.capture.read(0)
-            frame = cv2.cvtColor(got_frame, cv2.COLOR_BGR2GRAY)
+            ret, frame = self.capture.read(0)
+
             frame = self.Face_detector(frame, s_id, s_name)
 
             if self.trainingOngoing != True:
@@ -80,18 +85,17 @@ class controller:
 
     def Face_detector(self, img, s_id, s_name):  # detects "face" on video frame
 
-        #Img = img.copy()
+
         found = self.face_cascades.detectMultiScale(
             img, scaleFactor=1.2, minNeighbors=3)
-
-        # print('found fas are :', found)
 
         if (found != ()):
             for (x, y, w, h) in found:
                 # Draw a "rectangle" around the faces, AND "rectangle with name " for recognized faces.
 
                 if self.yml_exists == True:
-                    Id, conf = self.recognizer.predict(img[y:y+h, x:x+w])
+                    gray= cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    Id, conf = self.recognizer.predict(gray[y:y+h, x:x+w])
                     cv2.rectangle(img, (x, y),
                                   (x+w, y+h), (0, 255, 0), 2)
                     cv2.putText(img, str(Id), (x, y-40),

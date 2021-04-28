@@ -8,9 +8,6 @@ def start_gui():
     root = tk.Tk()
     obj_view = view(root)
     root.mainloop()
-    global all_names
-    global all_ids
-    global students
 
 
 class view:
@@ -109,11 +106,11 @@ class view:
         s_id = self.ent_id.get()
 
         print("name :", s_name, "        id:", s_id)
-        print(all_ids)
+        print(self.obj_controller.obj_model.all_ids)
 
         if (s_id and s_name):  # when both name and id is given
             s_id = int(s_id)
-            if (s_id not in all_ids):  # given id is unique and not already present
+            if (s_id not in self.obj_controller.obj_model.all_ids):  # given id is unique and not already present
 
                 self.obj_controller.trainingOngoing = True
                 self.obj_controller.Video_capture(s_id, s_name)
@@ -122,11 +119,11 @@ class view:
 
                 messagebox.showinfo("Info", "Data successfully inserted!")
 
-                all_ids.add(s_id)
-                if (s_name not in all_names):
-                    all_names.append(s_name)
+                self.obj_controller.obj_model.all_ids.add(s_id)
+                if (s_name not in self.obj_controller.obj_model.all_names):
+                    self.obj_controller.obj_model.all_names.append(s_name)
 
-                students[s_id] = s_name
+                self.obj_controller.obj_model.students[s_id] = s_name
 
             else:  # if given id is already present
                 messagebox.showinfo(
@@ -149,8 +146,5 @@ class view:
 
 
 if __name__ == '__main__':
-    all_names = []
-    all_ids = set()
-    students = {}
 
     start_gui()
