@@ -20,6 +20,7 @@ import numpy as np
 import pickle
 import re
 import model
+import datetime
 
 
 class controller:
@@ -39,6 +40,7 @@ class controller:
         self.yml_exists = False
         self.trainingOngoing = False
         self.sample_count = 0
+        
 
         self.obj_model= model.Model()
 
@@ -48,6 +50,12 @@ class controller:
         if os.path.exists(yml_path):
             self.recognizer.read('Model/trained_model.yml')
             self.yml_exists = True
+            
+            self.predicted=[] # contains all the face id's we have tracked/recognized
+            self.dtime =dict() # will hold the value of current date time for a face
+            self.dwell_time= dict() # will contain dwell time of a face (in sec)
+            self.track=dict()
+        
         self.Video_capture()
 ####################################  FACE DETECTION & REGIATION ##############################
 
@@ -92,28 +100,52 @@ class controller:
         if (found != ()):
             for (x, y, w, h) in found:
                 # Draw a "rectangle" around the faces, AND "rectangle with name " for recognized faces.
-
+                
                 if self.yml_exists == True:
+                    
                     gray= cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                     Id, conf = self.recognizer.predict(gray[y:y+h, x:x+w])
+                    self.dwell_time_calculator(Id)
+
                     cv2.rectangle(img, (x, y),
                                   (x+w, y+h), (0, 255, 0), 2)
-                    cv2.putText(img, str(Id), (x, y-40),
+                    NAME= self.obj_model.students[Id]
+                    cv2.putText(img, NAME, (x, y-40),
                                 cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
-
                 cv2.rectangle(img, (x, y),
                               (x+w, y+h), (0, 255, 0), 2)
 
                 #--------------code for taking sample images for training the model ---------#
                 if self.trainingOngoing == True:
                     self.Store_images(img, x, y, w, h, s_id, s_name)
-
                 #-------------------------------------------------------------------------------#
-
         else:
             print("NO face found!!")
-
         return img
+
+
+    def dwell_time_calculator(self,Id):
+        if Id not in self.predicted: # when face is detected for thre 1st time
+            self.track[Id]=False
+            self.predicted.append(Id)
+            self.dtime[Id]= datetime.datetime.now()
+            self.dwell_time[Id]=0
+
+
+        elif self.track[Id]==False:
+            self.current_time =datetime.datetime.now()
+            self.old_time = self.dtime[Id]
+            time_diff = self.current_time-self.old_time
+            self.dtime[Id]= datetime.datetime.now()
+            sec = time_diff.total_seconds()
+            self.dwell_time[Id] += sec            
+
+            if self.dwell_time[Id] >= 10:
+
+                self.mark_attendance(Id)        
+                self.track[Id] =True  
+
+        print(self.dwell_time) 
 
 ########################################################################################################
 
@@ -141,7 +173,7 @@ class controller:
     def trainer(self):
 
         faces, Ids = self.getImagesAndLabels()
-        # recognizer.train(images, np.array(labels))
+        
         self.recognizer.train(faces, np.array(Ids))
         self.recognizer.save("Model/trained_model.yml")
         if not os.path.exists(yml_path):
@@ -191,4 +223,7 @@ class controller:
     def insert_record(self,s_name,s_id):
         #updating lists
         self.obj_model.insert_record(s_name,s_id)
+
+    def mark_attendance(self,Id):
+        print("Attendance of student"+ str(Id) +"has marked")
         
