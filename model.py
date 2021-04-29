@@ -8,16 +8,18 @@
 import csv
 import  os
 import re
+import datetime
 
 class Model:
     def __init__(self):
+
         global BASE_DIR
+        BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
+        self.csv_files_path = os.path.join(BASE_DIR,"attendance")
+
         self.all_names=[]
         self.all_ids=set()
         self.students={}
-        BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
-
-
         self.setup_lsts()
     
     def setup_lsts(self):
@@ -44,3 +46,25 @@ class Model:
 
         self.students[s_id] = s_name
 
+    def mark_attendance(self,Id):# mark the attendance in csv file
+        today = str(datetime.date.today())
+        file_name = today +".csv"
+        
+        if   file_name in os.listdir(self.csv_files_path):
+            #csv file alreaddy exists
+            # just mak the attendance
+        else:
+            #create a csv file and then mark the attendance
+
+        
+                    
+
+        today = str(datetime.date.today())
+        file_name = today +".csv"
+        
+        with open(file_name,'w') as file:
+
+            fieldnames= ["NAME", "ID"]
+            csv_writer =csv.DictWriter(file,fieldnames=fnames,delimiter='\t')
+
+            csv_writer.writeheader()

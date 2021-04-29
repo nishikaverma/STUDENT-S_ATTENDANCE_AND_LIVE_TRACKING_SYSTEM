@@ -225,5 +225,6 @@ class controller:
         self.obj_model.insert_record(s_name,s_id)
 
     def mark_attendance(self,Id):
-        print("Attendance of student"+ str(Id) +"has marked")
+        
+        self.obj_model.mark_attendance(Id)
         
