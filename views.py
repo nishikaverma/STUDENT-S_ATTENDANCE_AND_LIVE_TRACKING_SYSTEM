@@ -17,28 +17,32 @@ class view:
 
     def __init__(self, root):
         # ----------- gui coding of application ------------------
-        root.geometry("687x526+558+155")
+        root.geometry("560x400")
         root.title("Automatic Student's Attendance System")
         root.configure(background="#fff")
         self.root = root
 
         self.lb_headding = ttk.Label(
-            self.root, text="Welcome to Automatic Student's Attendance System ! ")
+            self.root, text="Welcome to Automatic Student's Attendance System ! ",font="Ariel 15 italic",background="#fff")
+        self.lb_headding.configure(borderwidth=5,relief="raised")
+        self.lb_headding.grid(row=0,column=0, columnspan=4)
 
         self.selection = tk.IntVar()
         self.rb_tracking = ttk.Radiobutton(
             self.root, text="Start Tracking", command=self.rb_option_select, variable=self.selection, value=1)
+        self.rb_tracking.grid(row=1,column=0,columnspan=4,sticky=tk.W,pady=5,padx=5)
 
         self.rb_Insert_Data = ttk.Radiobutton(
             self.root, text="Insert Student's data", command=self.rb_option_select, variable=self.selection, value=2)
+        self.rb_Insert_Data.grid(row=2,column=0,columnspan=4,pady=5,padx=5,sticky=tk.W)
 
         self.btn_proceed = ttk.Button(self.root, text="Proceed")
         self.btn_proceed.bind("<Button>", self.rb_option_select)
-
-        self.lb_headding.pack()
-        self.rb_tracking.pack()
-        self.rb_Insert_Data.pack()
-        self.btn_proceed.pack()
+        self.btn_proceed.grid(row=3,column=1,columnspan=2)
+        # self.lb_headding.pack()
+        #self.rb_tracking.pack()
+        #self.rb_Insert_Data.pack()
+        #self.btn_proceed.pack()
 
         # ------------------------------------------------------
         self.obj_controller = controller.controller()
