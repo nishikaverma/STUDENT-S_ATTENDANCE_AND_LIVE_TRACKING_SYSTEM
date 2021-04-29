@@ -26,22 +26,41 @@ print("----------------------------------------------------------------------")
 print("----------------------------------------------------------------------")
 # PRINTING SHEET (JSON FORMAT)
 data = get_data("Student_data.ods") # got data in the form of JSON object 
-print(dict(data))
+#print(dict(data))
 d1= dict(data)
-d1.dele
+
+all_names = []
+all_ids = set()
+students = {}
+
+for v in d1.values():
+    print(v)
+    print(type(v))
+    for record in v[1:]:
+        
+        print(record)
+        if record[0] not in all_names:
+            all_names.append(record[0])
+
+        all_ids.add(record[1])
+        students[record[1]] = record[0]
+print("----------------------------------------------------------------------")
+print(all_ids)
+print(all_names)
+print(students)
+ 
+print("----------------------------------------------------------------------")
+
+# # PRINTING SHEET (TABLE FORMAT)
+# sheet = pe.get_sheet(file_name="Student_data.ods")
+# print(sheet)
 
 print("----------------------------------------------------------------------")
 
-# PRINTING SHEET (TABLE FORMAT)
-sheet = pe.get_sheet(file_name="Student_data.ods")
-print(sheet)
-
-print("----------------------------------------------------------------------")
-
-# ADDING A NEW ROW
-sheet.row += [12, 11, 10]
-sheet.save_as("Student_data.ods")
-print(sheet)
+# # ADDING A NEW ROW
+# sheet.row += [12, 11, 10]
+# sheet.save_as("Student_data.ods")
+# print(sheet)
 
 
 

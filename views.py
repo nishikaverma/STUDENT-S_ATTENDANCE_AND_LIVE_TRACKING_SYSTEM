@@ -110,20 +110,26 @@ class view:
 
         if (s_id and s_name):  # when both name and id is given
             s_id = int(s_id)
-            if (s_id not in self.obj_controller.obj_model.all_ids):  # given id is unique and not already present
+            if (s_id not in self.obj_controller.obj_model.all_ids):  # given id is unique (i.e. not already present)
 
                 self.obj_controller.trainingOngoing = True
                 self.obj_controller.Video_capture(s_id, s_name)
                 self.obj_controller.sample_count = 0
                 self.obj_controller.trainingOngoing = False
 
-                messagebox.showinfo("Info", "Data successfully inserted!")
+                #adding new student's data to excel file
+                status = self.obj_controller.insert_record(s_name,s_id)
+                if (status):
+                    messagebox.showinfo("Info", "Data successfully inserted!")
 
-                self.obj_controller.obj_model.all_ids.add(s_id)
-                if (s_name not in self.obj_controller.obj_model.all_names):
-                    self.obj_controller.obj_model.all_names.append(s_name)
+                    # self.obj_controller.obj_model.all_ids.add(s_id)
+                    # if (s_name not in self.obj_controller.obj_model.all_names):
+                    #     self.obj_controller.obj_model.all_names.append(s_name)
 
-                self.obj_controller.obj_model.students[s_id] = s_name
+                    # self.obj_controller.obj_model.students[s_id] = s_name
+                else:
+                    messagebox.showinfo("Error",
+                                "Sorry! Unable to insert data. Something went wrong :-( ")
 
             else:  # if given id is already present
                 messagebox.showinfo(
@@ -131,7 +137,7 @@ class view:
 
         elif not(s_id) or not(s_name):  # if any one of them (name or id ) is not entered
             messagebox.showinfo("COMPLETE DATA NOT GIVEN!",
-                                "Plese insert the all values!")
+                                "Plese insert all values!")
 
     def trainer(self, e):  # when "train" butten is pressed
 
