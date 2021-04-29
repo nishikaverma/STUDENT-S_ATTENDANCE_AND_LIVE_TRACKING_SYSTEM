@@ -123,6 +123,8 @@ class controller:
             print("NO face found!!")
         return img
 
+########################################################################################################
+
 
     def dwell_time_calculator(self,Id):
         if Id not in self.predicted: # when face is detected for thre 1st time
@@ -146,8 +148,6 @@ class controller:
                 self.track[Id] =True  
 
         print(self.dwell_time) 
-
-########################################################################################################
 
     # --------------- code for taking and storing sample images for training the model:----------------
     def Store_images(self, img, x, y, w, h, s_id, s_name):
@@ -225,6 +225,6 @@ class controller:
         self.obj_model.insert_record(s_name,s_id)
 
     def mark_attendance(self,Id):
-        
         self.obj_model.mark_attendance(Id)
+        
         

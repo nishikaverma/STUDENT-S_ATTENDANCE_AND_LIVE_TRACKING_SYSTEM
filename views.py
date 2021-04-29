@@ -119,9 +119,7 @@ class view:
                 self.obj_controller.trainingOngoing = False
 
                 #updating lists
-                status = self.obj_controller.insert_record(s_name,s_id)
-
-                
+                status = self.obj_controller.insert_record(s_name,s_id)  
                 messagebox.showinfo("Info", "Data successfully inserted!")
 
             else:  # if given id is already present

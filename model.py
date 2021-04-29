@@ -4,7 +4,7 @@
 # students = {} -- global dictionary, containing key: value pairs as :-(id:name)
 #                                     - keys :- (unique)id of a student
 #                                     - values :- name of syudent , with id "key"
-
+from tkinter import messagebox
 import csv
 import  os
 import re
@@ -50,21 +50,25 @@ class Model:
         today = str(datetime.date.today())
         file_name = today +".csv"
         
-        if   file_name in os.listdir(self.csv_files_path):
-            #csv file alreaddy exists
-            # just mak the attendance
-        else:
-            #create a csv file and then mark the attendance
-
+        file_name_with_path= os.path.join(self.csv_files_path,file_name)
+         
+        if (file_name not in os.listdir(self.csv_files_path)): # if today's  attendance's csv file is NOT present
+            self.create_csv_file(file_name_with_path)
+            
         
-                    
+        with open(file_name_with_path ,'a') as file:
+            fieldnames= ["NAME", "ID"]
+            data_to_insert={'NAME':self.students[Id],'ID':Id} 
+            csv_writer =csv.DictWriter(file,fieldnames=fieldnames,delimiter='\t')
+            csv_writer.writerow(data_to_insert)
 
-        today = str(datetime.date.today())
-        file_name = today +".csv"
-        
-        with open(file_name,'w') as file:
+        messagebox.showinfo("Attendance marked", "Attendance marked for student '" +self.students[Id]+"' with id "+str(Id))
+
+
+    def create_csv_file(self,file_name_with_path):               
+
+        with open(file_name_with_path,'w') as file:
 
             fieldnames= ["NAME", "ID"]
-            csv_writer =csv.DictWriter(file,fieldnames=fnames,delimiter='\t')
-
+            csv_writer =csv.DictWriter(file,fieldnames=fieldnames,delimiter='\t')
             csv_writer.writeheader()
