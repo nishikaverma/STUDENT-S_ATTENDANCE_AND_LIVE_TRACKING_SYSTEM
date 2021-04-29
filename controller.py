@@ -189,6 +189,6 @@ class controller:
         return faceSamples, Ids
 
     def insert_record(self,s_name,s_id):
-        #will add a new row(student) in excel sheet
-        status = self.obj_model.insert_record(s_name,s_id)
-        return status
+        #updating lists
+        self.obj_model.insert_record(s_name,s_id)
+        
