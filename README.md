@@ -8,6 +8,9 @@ STUDENT ATTENDANCE SYSTEM AND  LIVE TRACKING
 
 ![taking_data_set](https://user-images.githubusercontent.com/51054631/116808316-c45e0d00-ab55-11eb-883b-1010591d1ad4.png)
 
+![attendance_marking](https://user-images.githubusercontent.com/51054631/116808354-eeafca80-ab55-11eb-8f24-c1b4366c2f43.png)
+
+
 
 
 
