@@ -1,6 +1,5 @@
 STUDENT ATTENDANCE SYSTEM AND  LIVE TRACKING 
 
-x-special/nautilus-clipboardfile:///home/nishi/Desktop/main_window.png
 
 ​​​​TECHNOLOGY USED ​​​​
 
