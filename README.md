@@ -1,6 +1,8 @@
 STUDENT ATTENDANCE SYSTEM AND  LIVE TRACKING 
 
 
+![main_window](https://user-images.githubusercontent.com/51054631/116808268-7cd78100-ab55-11eb-8067-2c7b24e60d7c.png)
+
 ​​​​TECHNOLOGY USED ​​​​
 
 The system is implemented using Python Programming Language.
