@@ -6,6 +6,10 @@ STUDENT ATTENDANCE SYSTEM AND  LIVE TRACKING
 
 ![face_detection_reco_racking](https://user-images.githubusercontent.com/51054631/116808282-98db2280-ab55-11eb-9dd1-d726286d2308.png)
 
+![taking_data_set](https://user-images.githubusercontent.com/51054631/116808316-c45e0d00-ab55-11eb-883b-1010591d1ad4.png)
+
+
+
 
 
 ​​​​TECHNOLOGY USED ​​​​
