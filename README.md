@@ -22,8 +22,7 @@ with the help of Python's libraries such as :
 ​   model.py ------------>  controller.py  -----------> views.py   ​
 
 ​model.py :  It manages all the updations and maintainance (attendance marking, attendanec file creation, etc.) of CSV files.  
-​controller.py :  It takes all the event requests from "views.py" , process it, and sends the response back .
-      Also forwards the requests to model.py, if required, accepts & transfers the  response back to views.py 
+​controller.py :  It takes all the event requests from "views.py" , process it, and sends the response back .Also forwards the requests to model.py, if required, accepts & transfers the  response back to views.py 
 ​views.py : Contains all the GUI (Front end) of app. Takes all the requests.
 
 ​​​​​​​ALGORITHM ​​​​​​​​​
