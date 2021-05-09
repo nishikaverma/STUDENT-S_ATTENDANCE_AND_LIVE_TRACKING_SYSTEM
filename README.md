@@ -58,6 +58,41 @@ with the help of Python's libraries such as :
 4.  Face detection  + Face recognization
 5.  Attendance marking (csv file updation)
 
+
+
+    1. Object(face) tracking on the video (face detection +tracking):
+      
+    • As soon as the tracking is “on”, the system detects object (here faces) on the video frame and faces are detected, which are then tracked on the screen.
+    • Here, since NO sample images are given to the system as a refrence for face recognization, the system will only detect (and track) faces, but not recognizes them.
+
+
+    2. Capturing  face samples and storing it:
+       
+    • For making the system to be able to  recognize faces, sample data should be given. Thus, the system will capture  some fixed (constant int) number of facial image samples of each student, whose face is needed to be recognized.
+
+
+    3. Creating and training face detection "model" (.yml file):
+       
+    • Once sample images are stored in the system, a face recognization model (a .yml file) is then created, and trained with the given sample images, simaltaneously, so as to recognize faces on screen.
+       
+    4. Face detection +Face recognization:
+       
+    • So, now when the video is ON, the system is able to detect as well as recognize faces on the screen.
+    • The recognised student’s faces will be displayed with their name on the video frame.
+
+
+    5. Attendance marking (csv file updation):
+      
+    • Once the faces are being successfully recognized, the presence of recognised faces are tracked on the video frame for a perticular amount of time .
+      
+    • Thus, the amount of time an object appears on the video frame is called as Dwell time of an object.
+      
+    • If a face is beig recognized for a fixed amount of time (implicit in the system), then the face(corrusponding student) is marked as “present”.
+      
+    • The attendance data is then simaltaneously updated in the CSV file. 
+      
+      
+
 ​ Face Detection : 
 
 HARCASCADE CLASSIFIERS (which internally uses "FEATURE MATCHING algo") is used for face detection.
